@@ -1,6 +1,8 @@
 import { Compare } from "./Compare";
 import { BackgroundGradient } from "./ui/BgGredient";
 
+// bekri is practicing
+
 const Hero = () => {
   return (
     <section className=" flex justify-center items-center min-h-[100vh] w-full bg-slate-900">
