@@ -19,11 +19,6 @@
 ### ✍️ Integrated Code Editor
 - Edit and debug directly in an online **Monaco Code Editor**.
 
-### ⚡ Code Execution
-- Run your code with the **Piston API** to test your fixes.
-
-### 🚨 Error Feedback
-- Get instant error messages if your code doesn't run as expected.
 
 ---
 
