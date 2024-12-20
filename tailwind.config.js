@@ -11,6 +11,7 @@ module.exports = {
       },
       colors: {
         p1: "#2EF2FF",
+        boxDark: "#24303F",
         p2: "#3C52D9",
         p3: "#C8EA80",
         p4: "#EAEDFF",
@@ -35,6 +36,7 @@ module.exports = {
       fontFamily: {
         inter: ["Inter", "sans-serif"],
         poppins: ["Poppins", "sans-serif"],
+        roboto: ["Roboto", "sans-serif"],
       },
       transitionProperty: {
         borderColor: "border-color",
@@ -71,13 +73,13 @@ module.exports = {
       lineHeight: {
         12: "48px",
       },
-    //   borderRadius: {
-    //     14: "14px",
-    //     20: "20px",
-    //     40: "40px",
-    //     half: "50%",
-    //     "7xl": "40px",
-    //   },
+      //   borderRadius: {
+      //     14: "14px",
+      //     20: "20px",
+      //     40: "40px",
+      //     half: "50%",
+      //     "7xl": "40px",
+      //   },
       flex: {
         50: "0 0 50%",
         320: "1px 0 320px",

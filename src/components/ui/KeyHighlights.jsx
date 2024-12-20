@@ -29,18 +29,18 @@ export const KeyHighlights = ({ className }) => {
   let [hoveredIndex, setHoveredIndex] = useState(null);
 
   return (
-    <section className="flex justify-center items-center min-h-[100vh] w-full bg-slate-800">
+    <section className="relative flex justify-center min-h-[80vh] py-16 items-center overflow-hidden w-full bg-transparent">
       <div className="flex flex-col max-w-[80%] mx-auto">
-        <h1 className="text-p1 text-5xl capitalize">What Makes It special</h1>
+        <h1 className="text-p1 text-5xl mb-8 capitalize">What Makes It special</h1>
         <div
           className={cn(
-            "grid grid-cols-1 md:grid-cols-2  lg:grid-cols-2 gap-4  py-10",
+            "grid grid-cols-1 md:grid-cols-2  lg:grid-cols-2 gap-4 ",
             className
           )}
         >
           {items.map((item, idx) => (
             <div
-              href={item?.link}
+              href={item?.title}
               key={item?.link}
               className="relative group  block p-2 h-full w-full cursor-pointer"
               onMouseEnter={() => setHoveredIndex(idx)}

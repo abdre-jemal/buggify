@@ -63,7 +63,7 @@ export const BackgroundBeamsWithCollision = ({ children, className }) => {
     <div
       ref={parentRef}
       className={cn(
-        "h-[26rem] md:h-[50rem] bg-gradient-to-b from-neutral-950 to-neutral-800 relative flex items-center w-full justify-center overflow-hidden py-10",
+        "min-h-[100vh] bg-gradient-to-b from-slate-900 to-slate-900 relative flex items-center w-full justify-center overflow-hidden py-10",
         // h-screen if you want bigger
         className
       )}
@@ -212,7 +212,7 @@ const Explosion = ({ ...props }) => {
   }));
 
   return (
-    <div {...props} className={cn("absolute z-50 h-2 w-2", props.className)}>
+    <div {...props} className={cn("absolute z-50 h-2 w-2 overflow-hidden", props.className)}>
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}

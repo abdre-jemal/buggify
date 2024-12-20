@@ -1,14 +1,14 @@
+import About from "./components/About";
 import { BackgroundLines } from "./components/BackgroundLines";
-import Challenge from "./components/Challenge";
 import Hero from "./components/Hero";
 // import Challenge from "./components/Challenge";
 
 import { BackgroundBeamsWithCollision } from "./components/ui/BgBeamCollusion";
-import {KeyHighlights} from "./components/ui/KeyHighlights";
+import { KeyHighlights } from "./components/ui/KeyHighlights";
 
 function App() {
   return (
-    <section>
+    <section className="relative">
       <BackgroundLines>
         <Hero />
       </BackgroundLines>
@@ -16,10 +16,9 @@ function App() {
       <BackgroundBeamsWithCollision>
         <KeyHighlights />
       </BackgroundBeamsWithCollision>
-      {/* challenges */}
-      <section className="">
-        <Challenge />
-      </section>
+      <BackgroundLines>
+          <About />
+      </BackgroundLines>
     </section>
   );
 }
