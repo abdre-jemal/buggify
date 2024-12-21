@@ -4,7 +4,7 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { atomOneDark } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import BugEditor from "./BugEditor";
@@ -25,8 +25,9 @@ import { Box, Container, Heading, Spinner, Text } from "@radix-ui/themes";
 import { useEffect, useState } from "react";
 import CopyToClipboard from "react-copy-to-clipboard";
 import "./ui/additional.css";
+import { LoaderCircle } from "lucide-react";
 
-const API_KEY = "AIzaSyAkH5y52LsR8vhuMGHMKGwXRkL_FnKSLkw";
+// const API_KEY =  ;
 
 function extractSections(responseText) {
   const regex = /\*\*([\w\s]+):\*\*([\s\S]*?)(?=\*\*[\w\s]+:|$)/g;
@@ -43,15 +44,12 @@ function extractSections(responseText) {
 }
 
 const fetchchallenge = async (topic, level) => {
-  // Check if a challenge is already stored in localStorage
   const cachedchallenge = localStorage.getItem("generatedchallenge");
   if (cachedchallenge) {
     return JSON.parse(cachedchallenge);
   }
 
-  // If no challenge in localStorage, fetch a new one from the API
-  //   process.env.REACT_APP_API_KEY
-  const genAI = new GoogleGenerativeAI(API_KEY);
+  const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
   const model = await genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
   const prompt = `Generate a React code snippet with a bug for the topic: ${topic}, and make the complexity level ${level}.
@@ -86,22 +84,40 @@ function Chellenges() {
   const [code, setCode] = useState("");
   const [codied, setCopied] = useState(false);
 
-  const {
-    data: challenge,
-    isPending,
-    // error,
-    status,
-    refetch,
-  } = useQuery({
-    queryKey: ["challenge"],
-    queryFn: (selectedTopic, selectedLevel) =>
-      fetchchallenge(selectedTopic, selectedLevel),
-    // enabled: false,
-    staleTime: Infinity,
-  });
+  // const {
+  //   data: challenge,
+  //   isPending,
+  //   // error,
+  //   status,
+  //   refetch,
+  // } = useQuery({
+  //   queryKey: ["challenge"],
+  //   queryFn: (selectedTopic, selectedLevel) =>
+  //     fetchchallenge(selectedTopic, selectedLevel),
+  //   // enabled: false,
+  //   staleTime: Infinity,
+  // });
 
-  console.log(isPending);
-  console.log(status);
+  const useGenerateChallenge = () => {
+    const queryClient = useQueryClient();
+    // const { toast } = useToast();
+
+    return useMutation({
+      mutationFn: (topic, level) => fetchchallenge(topic, level),
+
+      onSuccess: async () => {
+        await queryClient.invalidateQueries({
+          queryKey: ["temporary-Payments"],
+        });
+        // toast({
+        //   variant: "success",
+        //   title: "Temporary Payment Added Successfully ",
+        // });
+      },
+    });
+  };
+
+  const { mutate, data: challenge, isPending, status } = useGenerateChallenge();
 
   const {
     "Buggy Code": Buggy,
@@ -185,7 +201,7 @@ function Chellenges() {
           className="generate_button my-2"
           onClick={() => {
             localStorage.removeItem("generatedchallenge");
-            refetch();
+            mutate(selectedTopic, selectedLevel);
           }}
           disabled={isPending}
         >
@@ -270,7 +286,9 @@ function Chellenges() {
                   )}
                 </div>
               ))}
-            {isPending && <Spinner />}
+            {isPending && (
+              <LoaderCircle className="mx-auto animate-spin text-white w-20 h-20" />
+            )}
           </div>
         </ResizablePanel>
         <ResizableHandle withHandle />
