@@ -10,7 +10,7 @@ const Hero = () => {
         <div className="flex flex-col lg:flex-row gap-y-6 lg:gap-x-8 items-center flex-wrap justify-center w-full max-w-7xl px-4 sm:px-6 lg:px-8 relative">
           {/* Text Content */}
           <div className="flex-[0_0_auto] text-center lg:text-left w-full md:w-10/12 lg:w-5/12 xl:w-5/12 px-4 md:px-8 lg:px-4 mt-10 max-w-full">
-            <h1 className="text-[calc(1.375rem+1.5vw)] font-bold leading-snug xl:text-4xl mb-5 text-p1 font-roboto">
+            <h1 className="text-[calc(1.375rem+1.5vw)] font-bold leading-snug xl:text-5xl mb-5 text-p1 font-roboto">
               Master React by Fixing Real Bugs!
             </h1>
             <p className="text-base md:text-lg leading-relaxed max-w-lg md:max-w-2xl mb-7 text-white">

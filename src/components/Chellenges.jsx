@@ -9,12 +9,21 @@ import SyntaxHighlighter from "react-syntax-highlighter";
 import { atomOneDark } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import BugEditor from "./BugEditor";
 
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+
+import copy from "../assets/copy.png";
+
 import { topics } from "../lib/constants";
 
-import { Box, Container, Heading, Text } from "@radix-ui/themes";
-import { PlayCircle } from "lucide-react";
+import { Box, Container, Heading, Spinner, Text } from "@radix-ui/themes";
 import { useEffect, useState } from "react";
-import { executeCode } from "../lib/api";
+import CopyToClipboard from "react-copy-to-clipboard";
 import "./ui/additional.css";
 
 const API_KEY = "AIzaSyAkH5y52LsR8vhuMGHMKGwXRkL_FnKSLkw";
@@ -74,12 +83,14 @@ const fetchchallenge = async (topic, level) => {
 function Chellenges() {
   const [selectedTopic, setSelectedTopic] = useState(topics[0]);
   const [selectedLevel, setSelectedLevel] = useState("Beginner");
+  const [code, setCode] = useState("");
+  const [codied, setCopied] = useState(false);
 
   const {
     data: challenge,
-    isLoading,
+    isPending,
     // error,
-    // status,
+    status,
     refetch,
   } = useQuery({
     queryKey: ["challenge"],
@@ -89,13 +100,14 @@ function Chellenges() {
     staleTime: Infinity,
   });
 
+  console.log(isPending);
+  console.log(status);
+
   const {
     "Buggy Code": Buggy,
     Solution,
     Description,
   } = extractSections(challenge);
-
-  // console.log(executeCode(Solution));
 
   const [isMobile, setIsMobile] = useState(false);
 
@@ -175,9 +187,14 @@ function Chellenges() {
             localStorage.removeItem("generatedchallenge");
             refetch();
           }}
-          disabled={isLoading}
+          disabled={isPending}
         >
-          {isLoading ? "Generating..." : "Next challenge"}
+          {status == "pending" ? (
+            <span>Generating...</span>
+          ) : (
+            <span>Next challenge</span>
+          )}
+          {/* {status == "success" || <span>Next challenge</span>} */}
         </button>
       </div>
 
@@ -200,31 +217,60 @@ function Chellenges() {
       >
         <ResizablePanel defaultSize={50} minSize={35}>
           {/* buggy code */}
-          <div className="flex justify-end">
-          <button className="px-3 py-1 m-1 rounded-md border border-blue-500 flex justify-between gap-x-2  capitalize text-blue-500 hover:bg-slate-800">
-            {/* <PlayCircle /> */}
-            <span className="">Show The solution</span>
-          </button></div>
-          <div className="mt-">
-            {[Buggy]?.map((snippet, index) => (
-              <div
-                className="rounded-md"
-                key={index}
-                style={{ marginBottom: "20px" }}
-              >
-                {snippet?.trim() ? (
-                  <SyntaxHighlighter
-                    className="rounded-md pl-4 max-w-[40rem] h-[90vh]"
-                    language="javascript"
-                    style={atomOneDark}
-                  >
-                    {snippet.replace(/```jsx|```/g, "")}
-                  </SyntaxHighlighter>
-                ) : (
-                  <p>No valid code to display</p>
-                )}
+          {/* solution dialog */}
+          <Dialog className="max-h-[80vh] overflow-scroll">
+            <DialogTrigger>
+              <div className="flex justify-end">
+                <button className="px-3 py-1 m-1 rounded-md border border-blue-500 flex justify-between gap-x-2  capitalize text-blue-500 hover:bg-slate-800">
+                  {/* <PlayCircle /> */}
+                  <span className="">Show The solution</span>
+                </button>
               </div>
-            ))}
+            </DialogTrigger>
+            <DialogContent className=" ">
+              <DialogHeader>
+                <DialogTitle>Here is the solution</DialogTitle>
+                {[Solution]?.map((snippet, index) => (
+                  <div key={index} style={{ marginBottom: "20px" }}>
+                    {/* <h2 className="text-xl my-4 font-semibold">Solution</h2> */}
+                    {snippet?.trim() ? (
+                      <SyntaxHighlighter
+                        className="rounded-md pl-4 "
+                        language="javascript"
+                        style={atomOneDark}
+                      >
+                        {snippet.replace(/```jsx|```/g, "")}
+                      </SyntaxHighlighter>
+                    ) : (
+                      <p>No valid code to display</p>
+                    )}
+                  </div>
+                ))}
+              </DialogHeader>
+            </DialogContent>
+          </Dialog>
+          <div className="mt-">
+            {isPending ||
+              [Buggy]?.map((snippet, index) => (
+                <div
+                  className="rounded-md"
+                  key={index}
+                  style={{ marginBottom: "20px" }}
+                >
+                  {snippet?.trim() ? (
+                    <SyntaxHighlighter
+                      className="rounded-md pl-4 max-w-[40rem] h-[90vh]"
+                      language="javascript"
+                      style={atomOneDark}
+                    >
+                      {snippet.replace(/```jsx|```/g, "")}
+                    </SyntaxHighlighter>
+                  ) : (
+                    <p>No valid code to display</p>
+                  )}
+                </div>
+              ))}
+            {isPending && <Spinner />}
           </div>
         </ResizablePanel>
         <ResizableHandle withHandle />
@@ -232,13 +278,21 @@ function Chellenges() {
           {/* editor */}
           <div className="bg-slate-900">
             <div className="flex justify-end m">
-              <button className="px-3 py-1 m-1 rounded-md border border-green-500 flex justify-between gap-x-2 text-green-500 hover:bg-slate-800">
-                <PlayCircle />
-                <span className="">Run Code</span>
-              </button>
+              {/* react-copy-to-clipboard */}
+              <CopyToClipboard text={code} onCopy={() => setCopied(true)}>
+                <button className="px-3 py-1 m-1 rounded-md border border-green-500 flex justify-between items-center gap-x-2 text-green-500 hover:bg-slate-800">
+                  {/* <Clipboard />
+                  codied
+                  */}
+                  <span className="capitalize">
+                    {codied ? "Copied" : "copy your solution"}
+                  </span>
+                  <img src={copy} alt="" />
+                </button>
+              </CopyToClipboard>
             </div>
             <div className="w-full">
-              <BugEditor />
+              <BugEditor value={code} setValue={setCode} />
             </div>
           </div>
         </ResizablePanel>
@@ -251,22 +305,8 @@ export default Chellenges;
 
 {
   {
-    /* {error && <p style={{ color: "red" }}>Error: {error.message}</p>} */
+    /* {error && <p style={{ color: "red" }}>Error:
+    
+    {error.message}</p>} */
   }
-  /* {[Solution]?.map((snippet, index) => (
-            <div key={index} style={{ marginBottom: "20px" }}>
-              <h2 className="text-xl my-4 font-semibold">Solution</h2>
-              {snippet?.trim() ? (
-                <SyntaxHighlighter
-                  className="rounded-md pl-4 max-w-xl"
-                  language="javascript"
-                  style={atomOneDark}
-                >
-                  {snippet.replace(/```jsx|```/g, "")}
-                </SyntaxHighlighter>
-              ) : (
-                <p>No valid code to display</p>
-              )}
-            </div>
-          ))} */
 }

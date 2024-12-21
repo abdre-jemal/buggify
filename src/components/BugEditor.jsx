@@ -1,5 +1,4 @@
 import Editor from "@monaco-editor/react";
-import { useState } from "react";
 
 const defaultValue = `\n function Solution() {
 return (
@@ -11,9 +10,10 @@ return (
 export default Solution
 `;
 
-function BugEditor() {
-  const [value, setValue] = useState("");
-  console.log(value);
+// eslint-disable-next-line react/prop-types
+function BugEditor({ value, setValue }) {
+  // const [value, setValue] = useState("");
+  // console.log(value);
 
   return (
     <div>

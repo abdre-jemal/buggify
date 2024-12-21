@@ -4,7 +4,8 @@
   --border-width: 4px;
   appearance: none;
   position: relative;
-  padding: 0.6em 1.25em;
+  padding: 0.6em 1.5em;
+  z-index: 100;
   border: 0;
   background-color: #212121;
   font-family: "Roboto", Arial, "Segoe UI", sans-serif;
